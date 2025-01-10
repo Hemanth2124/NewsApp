@@ -18,7 +18,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> fetchInfo(String endpoint, String category) async {
     final String url =
-        'https://newsapi.org/v2/$endpoint?q=$category&apiKey=092843a569dd4a2d83023322cb161b5e';
+        'https://newsapi.org/v2/$endpoint?q=$category&apiKey=3abdc8f43dac40a2a245fd2668686ba9';
 
    try {
       final response = await http.get(Uri.parse(url));

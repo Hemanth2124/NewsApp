@@ -25,7 +25,7 @@ class _homepageState extends State<homepage> {
   var loading=true;
   Future fetchinfo(String endpoint, String category) async {
     final String url =
-        'https://newsapi.org/v2/$endpoint=$category&apiKey=092843a569dd4a2d83023322cb161b5e';
+        'https://newsapi.org/v2/$endpoint=$category&apiKey=3abdc8f43dac40a2a245fd2668686ba9';
 
     final response = await http.get(Uri.parse(url));
     final json = jsonDecode(response.body);
@@ -260,7 +260,7 @@ class _homepageState extends State<homepage> {
 
   Future fetching_api() async {
     const url =
-        'https://newsapi.org/v2/top-headlines?country=us&apiKey=092843a569dd4a2d83023322cb161b5e';
+        'https://newsapi.org/v2/top-headlines?country=us&apiKey=3abdc8f43dac40a2a245fd2668686ba9';
     final uri = Uri.parse(url);
     final response = await http.get(uri);
     final body = response.body;
