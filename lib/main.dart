@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/homepage.dart';
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
           actions: [
             Builder(builder: (context) {
               return Row(
-                
+                children: [
                   IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
@@ -62,10 +63,18 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
                 icon: Icon(Icons.person),
-              
-              // ignore: dead_code
-              
-                
+              ),
+              IconButton(
+                onPressed: ()async{
+                 await FirebaseAuth.instance.signOut();
+                 Navigator.of(context).pop(
+                  MaterialPageRoute(
+                    builder: (context) => loginpage(),
+                    ),
+                 );
+                }, 
+                icon:Icon(Icons.logout),),
+                ]
               );
             },
             ),
@@ -96,4 +105,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
