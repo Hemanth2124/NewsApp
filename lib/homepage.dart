@@ -266,16 +266,19 @@ class _homepageState extends State<homepage> {
     final body = response.body;
   final jsondata=jsonDecode(body);
   if(jsondata['articles'] != null){
-    if(mounted){}
+    if(mounted){
     setState(() {
       data=jsondata['articles'];
       loading=false;
     });
+    }
   }
   else{
+    if(mounted){
     setState(() {
       data=[];
     });
+  }
   }
   }
 }

@@ -25,10 +25,7 @@ class _detailscreenState extends State<detailscreen> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 229, 236, 98),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.save_alt),
-          ),
+          
           IconButton(
             onPressed: () async {
               final docUser = FirebaseFirestore.instance
@@ -39,7 +36,7 @@ class _detailscreenState extends State<detailscreen> {
                 DocumentSnapshot docSnapshot = await docUser.get();
 
                 if (docSnapshot.exists) {
-                  // Check if the article is already saved
+                  
                   bool articleExists = false;
                   List existingArticles = docSnapshot.get('articles') ?? [];
 
@@ -51,24 +48,24 @@ class _detailscreenState extends State<detailscreen> {
                   }
 
                   if (!articleExists) {
-                    // Add the new article
+                   
                     existingArticles.add(widget.article);
                     await docUser.update({
                       'articles': existingArticles,
                     });
 
-                    // Show success snackbar
+                    
                     SnackBar profileSnack =
                         SnackBar(content: Text('Saved successfully'));
                     ScaffoldMessenger.of(context).showSnackBar(profileSnack);
                   } else {
-                    // Show "already saved" snackbar
+                    
                     SnackBar profileSnack =
                         SnackBar(content: Text('Already saved'));
                     ScaffoldMessenger.of(context).showSnackBar(profileSnack);
                   }
                 } else {
-                  // Document doesn't exist, create it with the current article
+                  
                   await docUser.set({
                     'articles': [widget.article],
                   });

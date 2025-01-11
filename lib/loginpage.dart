@@ -32,11 +32,14 @@ class _loginpageState extends State<loginpage> {
   if (isLoggedIn && user != null) {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(mounted){
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MyApp()),
       );
+      }
     });
+  
   } else {
     
     await saveLoginState(false);
@@ -58,13 +61,14 @@ class _loginpageState extends State<loginpage> {
 
       await saveLoginState(true);
 
-      
+      if(mounted){
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MyApp(),
         ),
       );
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -178,7 +182,7 @@ class _loginpageState extends State<loginpage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () async {
                   await googleSignIn();
@@ -188,6 +192,7 @@ class _loginpageState extends State<loginpage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
+              SizedBox(height:8),
               Builder(builder: (context) {
                 return ElevatedButton(
                   onPressed: () {
@@ -212,8 +217,10 @@ class _loginpageState extends State<loginpage> {
   }
   Future loaduser() async {
     var prefs = await SharedPreferences.getInstance();
+    if(mounted){
     setState(() {
       save.loggedinusername = prefs.getString('loggedinusername') ?? "";
     });
+  }
   }
 }
