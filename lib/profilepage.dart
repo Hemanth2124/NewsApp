@@ -24,15 +24,9 @@ Future<void> fetchProfileDetails() async {
   final firestore = FirebaseFirestore.instance;
 
   try {
-    // Get the document
     DocumentSnapshot documentSnapshot = await firestore.collection('profiledetails').doc('my-id').get();
-
-    // Check if the document exists
     if (documentSnapshot.exists) {
-      // Extract the data
       Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-
-      // Print or use the data
       String name = data['name'] ?? 'Unknown';
       String bio = data['bio'] ?? 'No bio available';
       print('Name: $name, Bio: $bio');

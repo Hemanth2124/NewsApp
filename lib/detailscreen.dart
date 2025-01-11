@@ -1,9 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class detailscreen extends StatelessWidget {
-  final Map<String, dynamic> article;  // Changed from index
-  detailscreen({required this.article});  // Updated constructor
+import 'package:my_flutter_app/loggedin.dart';
 
+class detailscreen extends StatefulWidget {
+  final Map<String, dynamic> article; // Changed from index
+  detailscreen({required this.article});
+  @override
+  State<detailscreen> createState() => _detailscreenState();
+}
+
+class _detailscreenState extends State<detailscreen> {
+  // Updated constructor
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +28,64 @@ class detailscreen extends StatelessWidget {
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.save_alt),
-          )
+          ),
+          IconButton(
+            onPressed: () async {
+              final docUser = FirebaseFirestore.instance
+                  .collection(save.loggedinusername)
+                  .doc('saved articles');
+
+              try {
+                DocumentSnapshot docSnapshot = await docUser.get();
+
+                if (docSnapshot.exists) {
+                  // Check if the article is already saved
+                  bool articleExists = false;
+                  List existingArticles = docSnapshot.get('articles') ?? [];
+
+                  for (var existingArticle in existingArticles) {
+                    if (existingArticle['title'] == widget.article['title']) {
+                      articleExists = true;
+                      break;
+                    }
+                  }
+
+                  if (!articleExists) {
+                    // Add the new article
+                    existingArticles.add(widget.article);
+                    await docUser.update({
+                      'articles': existingArticles,
+                    });
+
+                    // Show success snackbar
+                    SnackBar profileSnack =
+                        SnackBar(content: Text('Saved successfully'));
+                    ScaffoldMessenger.of(context).showSnackBar(profileSnack);
+                  } else {
+                    // Show "already saved" snackbar
+                    SnackBar profileSnack =
+                        SnackBar(content: Text('Already saved'));
+                    ScaffoldMessenger.of(context).showSnackBar(profileSnack);
+                  }
+                } else {
+                  // Document doesn't exist, create it with the current article
+                  await docUser.set({
+                    'articles': [widget.article],
+                  });
+
+                  SnackBar profileSnack =
+                      SnackBar(content: Text('Saved successfully'));
+                  ScaffoldMessenger.of(context).showSnackBar(profileSnack);
+                }
+              } catch (e) {
+                // Handle any errors
+                SnackBar errorSnack =
+                    SnackBar(content: Text('Error saving article: $e'));
+                ScaffoldMessenger.of(context).showSnackBar(errorSnack);
+              }
+            },
+            icon: Icon(Icons.save),
+          ),
         ],
         title: Center(
           child: Text(
@@ -49,7 +114,8 @@ class detailscreen extends StatelessWidget {
                       child: SizedBox(
                         height: 200,
                         child: Image.network(
-                          article['urlToImage'],  // Use the passed article data
+                          widget.article[
+                              'urlToImage'], // Use the passed article data
                           loadingBuilder: (BuildContext context, Widget child,
                               ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
@@ -76,7 +142,8 @@ class detailscreen extends StatelessWidget {
                       top: 10,
                       left: 10,
                       child: Text(
-                        article['source']['name'],  // Updated data reference
+                        widget.article['source']
+                            ['name'], // Updated data reference
                         style: TextStyle(
                           color: const Color.fromARGB(255, 229, 241, 62),
                         ),
@@ -88,7 +155,7 @@ class detailscreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
-                  article['title'],  // Updated
+                  widget.article['title'], // Updated
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -108,7 +175,7 @@ class detailscreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 8),
                 child: Text(
-                  article['content'],  // Updated
+                  widget.article['content'], // Updated
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -128,7 +195,7 @@ class detailscreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 20),
                 child: Text(
-                  article['description'],  // Updated
+                  widget.article['description'], // Updated
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 14,
@@ -148,7 +215,7 @@ class detailscreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 20),
                 child: Text(
-                  article['url'],  // Updated
+                  widget.article['url'], // Updated
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -161,16 +228,12 @@ class detailscreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      article['author'].toString().length > 15
-                          ? article['author']
-                              .toString()
-                              .substring(0, 15)
-                          : article['author'].toString(),
+                      widget.article['author'].toString().length > 15
+                          ? widget.article['author'].toString().substring(0, 15)
+                          : widget.article['author'].toString(),
                     ),
                     Text(
-                      article['publishedAt']
-                          .toString()
-                          .substring(0, 10),
+                      widget.article['publishedAt'].toString().substring(0, 10),
                     ),
                   ],
                 ),
@@ -182,4 +245,3 @@ class detailscreen extends StatelessWidget {
     );
   }
 }
-

@@ -4,33 +4,44 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_app/main.dart';
 import 'package:my_flutter_app/signuppage.dart';
+import 'loggedin.dart';
 
-class LoginPage extends StatefulWidget {
+class loginpage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<loginpage> createState() => _loginpageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _loginpageState extends State<loginpage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
+  
   @override
   void initState() {
     super.initState();
     checkLoginStatus();
+    loaduser();
   }
 
   Future<void> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  final prefs = await SharedPreferences.getInstance();
+  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    if (isLoggedIn) {
-      Navigator.push(
+  
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (isLoggedIn && user != null) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MyApp()),
       );
-    }
+    });
+  } else {
+    
+    await saveLoginState(false);
   }
+}
 
   Future<void> saveLoginState(bool isLoggedIn) async {
     final prefs = await SharedPreferences.getInstance();
@@ -45,10 +56,9 @@ class _LoginPageState extends State<LoginPage> {
       );
       print('User signed in: ${credential.user?.email}');
 
-      // Save login state
       await saveLoginState(true);
 
-      // Navigate to the main screen
+      
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -76,7 +86,8 @@ class _LoginPageState extends State<LoginPage> {
 
         if (googleAuth.accessToken != null && googleAuth.idToken != null) {
           try {
-            final userCredential = await FirebaseAuth.instance.signInWithCredential(
+            final userCredential =
+                await FirebaseAuth.instance.signInWithCredential(
               GoogleAuthProvider.credential(
                 accessToken: googleAuth.accessToken,
                 idToken: googleAuth.idToken,
@@ -85,10 +96,8 @@ class _LoginPageState extends State<LoginPage> {
 
             print('User signed in with Google: ${userCredential.user?.email}');
 
-            // Save login state
             await saveLoginState(true);
 
-            // Navigate to the main screen
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -179,24 +188,32 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MyWidget(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Sign up',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+              Builder(builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyWidget(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Sign up',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                );
+              }),
             ],
           ),
         ),
       ),
     );
+  }
+  Future loaduser() async {
+    var prefs = await SharedPreferences.getInstance();
+    setState(() {
+      save.loggedinusername = prefs.getString('loggedinusername') ?? "";
+    });
   }
 }

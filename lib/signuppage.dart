@@ -1,4 +1,8 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/loginpage.dart';
 
@@ -16,6 +20,10 @@ final TextEditingController emailcontroller=TextEditingController();
   final TextEditingController passwordcontroller=TextEditingController();
 
   final TextEditingController namecontroller=TextEditingController();
+
+  final TextEditingController biocontroller=TextEditingController();
+  final TextEditingController controllername=TextEditingController();
+
 Future<void> registeruser() async {
     try {
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -74,25 +82,46 @@ Future<void> registeruser() async {
               border: OutlineInputBorder(
                    borderRadius: BorderRadius.circular(20)
               ),
-              labelText: 'Full Name',
+              labelText: 'Name',
+              ),
+          ),
+          SizedBox(height:10),
+          TextField(
+            controller: biocontroller,
+              decoration: InputDecoration(
+              border: OutlineInputBorder(
+                   borderRadius: BorderRadius.circular(20)
+              ),
+              labelText: 'Bio',
               ),
           ),
           SizedBox(height:10),
           ElevatedButton(
+            child: Text('Create Account',
+             style: TextStyle(
+              fontWeight: FontWeight.bold,
+             ),),
             onPressed: ()async{
               await registeruser();
+              final firestore=FirebaseFirestore.instance;
+              firestore.collection('profiledetails').doc('my-id').set(
+                {'name': namecontroller.text,
+                'bio': biocontroller.text,
+                }
+              );
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder:(context) => loginpage(),)
                 );
+                 
             },
-             child: Text('Create Account',
-             style: TextStyle(
-              fontWeight: FontWeight.bold,
-             ),))
+
+              )
         ],
       )
+
     );
+    
   }
 }
