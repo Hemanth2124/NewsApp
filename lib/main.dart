@@ -1,16 +1,18 @@
-import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/homepage.dart';
 import 'package:my_flutter_app/loginpage.dart';
 import 'package:my_flutter_app/profilepage.dart';
 import 'package:my_flutter_app/savedpage.dart';
 import 'package:my_flutter_app/searchpage.dart';
-import 'data.dart';
 
 
 
-void main() {
-  runApp(MyApp());
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(loginpage());
   
 }
 
@@ -34,9 +36,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-       home:Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(
             "News App",
@@ -51,7 +51,9 @@ class _MyAppState extends State<MyApp> {
           leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
           actions: [
             Builder(builder: (context) {
-              return IconButton(
+              return Row(
+                
+                  IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -60,8 +62,13 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
                 icon: Icon(Icons.person),
+              
+              // ignore: dead_code
+              
+                
               );
-            })
+            },
+            ),
           ],
         ),
         body: pages[selectedindex],
@@ -85,7 +92,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ],
         ),
-       ),
+       
     );
   }
 }

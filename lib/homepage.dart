@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/data.dart';
 import 'package:my_flutter_app/detailscreen.dart';
-import 'package:my_flutter_app/main.dart';
+
 
 class homepage extends StatefulWidget {
   const homepage({super.key});

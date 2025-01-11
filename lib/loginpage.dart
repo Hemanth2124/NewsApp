@@ -8,24 +8,32 @@ class _loginpageState extends State<loginpage> {
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home:Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue[100],
         centerTitle: true,
         title: Text('Login Page',
         style: TextStyle(
-          fontSize: 20,
+          fontSize: 40,
           fontWeight: FontWeight.bold,
         ),),
       ),
       body:Center(
         child: Column(
           children: [
+            SizedBox(height:30),
             ClipRRect(
               borderRadius:BorderRadius.circular(50),
               child:SizedBox(
                 height:100,
-                width:100, 
+                width:100,
+                child: Image.asset(
+                  'lib/images/medium.webp',
+                  fit: BoxFit.fill,
+                ), 
               ),
+              
             ),
             SizedBox(height:16),
             TextField(
@@ -39,7 +47,7 @@ class _loginpageState extends State<loginpage> {
                 labelText: 'Password',
               ),
             ),
-            SizedBox(height:8),
+            SizedBox(height:10),
             Builder(
               builder: (context) {
                 return ElevatedButton(
@@ -51,10 +59,14 @@ class _loginpageState extends State<loginpage> {
                         ),
                     );
                   },
-                  child: Text('Sign in'),
+                  child: Text('Sign in',
+                  style:TextStyle(
+                    fontWeight: FontWeight.bold
+                  )),
                 );
               }
             ),
+            SizedBox(height:10),
             Builder(
               builder: (context) {
                 return ElevatedButton(
@@ -66,10 +78,14 @@ class _loginpageState extends State<loginpage> {
                           ),
                         );
                   },
-                  child: Text('Sign up'),
+                  child: Text('Sign up',
+                  style:TextStyle(
+                    fontWeight: FontWeight.bold
+                  )),
                 );
               }
             ),
+            
           ],
         ),
       ),
