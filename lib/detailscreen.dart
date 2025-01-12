@@ -4,14 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_app/loggedin.dart';
 
 class detailscreen extends StatefulWidget {
-  final Map<String, dynamic> article; // Changed from index
+  final Map<String, dynamic> article; 
   detailscreen({required this.article});
   @override
   State<detailscreen> createState() => _detailscreenState();
 }
 
 class _detailscreenState extends State<detailscreen> {
-  // Updated constructor
+   Future savetofirestore() async{
+    try{
+      CollectionReference articles=FirebaseFirestore.instance.collection('articles');
+      await articles.add(widget.article);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('article saved successfully')),
+      );
+    }
+    catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content:Text('Failed to save')),
+        );
+    }
+   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
