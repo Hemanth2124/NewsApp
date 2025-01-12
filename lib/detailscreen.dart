@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:my_flutter_app/loggedin.dart';
 
 class detailscreen extends StatefulWidget {
   final Map<String, dynamic> article; 
@@ -14,10 +13,18 @@ class _detailscreenState extends State<detailscreen> {
    Future savetofirestore() async{
     try{
       CollectionReference articles=FirebaseFirestore.instance.collection('articles');
+      QuerySnapshot snapshot=await articles.where('title',isEqualTo:widget.article['title'] ).get();
+      if(snapshot.docs.isNotEmpty){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Already Saved')),
+        );
+      }
+      else{
       await articles.add(widget.article);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('article saved successfully')),
       );
+      }
     }
     catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
@@ -41,58 +48,7 @@ class _detailscreenState extends State<detailscreen> {
           
           IconButton(
             onPressed: () async {
-              final docUser = FirebaseFirestore.instance
-                  .collection(save.loggedinusername)
-                  .doc('saved articles');
-
-              try {
-                DocumentSnapshot docSnapshot = await docUser.get();
-
-                if (docSnapshot.exists) {
-                  
-                  bool articleExists = false;
-                  List existingArticles = docSnapshot.get('articles') ?? [];
-
-                  for (var existingArticle in existingArticles) {
-                    if (existingArticle['title'] == widget.article['title']) {
-                      articleExists = true;
-                      break;
-                    }
-                  }
-
-                  if (!articleExists) {
-                   
-                    existingArticles.add(widget.article);
-                    await docUser.update({
-                      'articles': existingArticles,
-                    });
-
-                    
-                    SnackBar profileSnack =
-                        SnackBar(content: Text('Saved successfully'));
-                    ScaffoldMessenger.of(context).showSnackBar(profileSnack);
-                  } else {
-                    
-                    SnackBar profileSnack =
-                        SnackBar(content: Text('Already saved'));
-                    ScaffoldMessenger.of(context).showSnackBar(profileSnack);
-                  }
-                } else {
-                  
-                  await docUser.set({
-                    'articles': [widget.article],
-                  });
-
-                  SnackBar profileSnack =
-                      SnackBar(content: Text('Saved successfully'));
-                  ScaffoldMessenger.of(context).showSnackBar(profileSnack);
-                }
-              } catch (e) {
-                // Handle any errors
-                SnackBar errorSnack =
-                    SnackBar(content: Text('Error saving article: $e'));
-                ScaffoldMessenger.of(context).showSnackBar(errorSnack);
-              }
+              await savetofirestore();
             },
             icon: Icon(Icons.save),
           ),
