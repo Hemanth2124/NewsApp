@@ -10,28 +10,43 @@ class detailscreen extends StatefulWidget {
 }
 
 class _detailscreenState extends State<detailscreen> {
-   Future savetofirestore() async{
-    try{
-      CollectionReference articles=FirebaseFirestore.instance.collection('articles');
-      QuerySnapshot snapshot=await articles.where('title',isEqualTo:widget.article['title'] ).get();
-      if(snapshot.docs.isNotEmpty){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Already Saved')),
-        );
+   Future savetofirestore() async {
+    try {
+      CollectionReference articles = FirebaseFirestore.instance.collection('articles');
+      
+      // Use a specific document for saved articles
+      DocumentReference savedArticlesDoc = articles.doc('saved articles');
+
+      // Check if the article is already saved
+      DocumentSnapshot snapshot = await savedArticlesDoc.get();
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        List<dynamic> savedArticles = data['articles'] ?? [];
+
+        // Check if the article is already present
+        bool isArticleSaved = savedArticles.any((article) => article['title'] == widget.article['title']);
+        if (isArticleSaved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Already Saved')),
+          );
+          return;
+        }
       }
-      else{
-      await articles.add(widget.article);
+
+      // Save the article
+      await savedArticlesDoc.set({
+        'articles': FieldValue.arrayUnion([widget.article]),
+      }, SetOptions(merge: true));
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('article saved successfully')),
+        SnackBar(content: Text('Article saved successfully')),
       );
-      }
-    }
-    catch(e){
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content:Text('Failed to save')),
-        );
+        SnackBar(content: Text('Failed to save: $e')),
+      );
     }
-   }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

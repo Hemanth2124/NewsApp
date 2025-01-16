@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_flutter_app/detailscreen.dart';
+import 'detailscreen.dart';
 
 
 class SearchPage extends StatefulWidget {

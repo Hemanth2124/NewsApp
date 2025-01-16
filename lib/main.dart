@@ -2,16 +2,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:my_flutter_app/homepage.dart';
-import 'package:my_flutter_app/loginpage.dart';
-import 'package:my_flutter_app/profilepage.dart';
-import 'package:my_flutter_app/savedpage.dart';
-import 'package:my_flutter_app/searchpage.dart';
+import 'homepage.dart';
+import 'savedpage.dart';
+import 'searchpage.dart';
+import 'profilepage.dart';
+import 'loginpage.dart';
 
 
 
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(RootApp());

@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firstapp/data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'signupage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_flutter_app/main.dart';
-import 'package:my_flutter_app/signuppage.dart';
+import 'main.dart';
 import 'loggedin.dart';
 
 class loginpage extends StatefulWidget {
@@ -14,6 +15,10 @@ class loginpage extends StatefulWidget {
 class _loginpageState extends State<loginpage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+
   
   @override
   void initState() {
@@ -82,44 +87,26 @@ class _loginpageState extends State<loginpage> {
     }
   }
 
-  Future<void> googleSignIn() async {
+    Future<User?> _signInWithGoogle(BuildContext context) async {
     try {
-      final googleAccount = await GoogleSignIn().signIn();
-      if (googleAccount != null) {
-        final googleAuth = await googleAccount.authentication;
-
-        if (googleAuth.accessToken != null && googleAuth.idToken != null) {
-          try {
-            final userCredential =
-                await FirebaseAuth.instance.signInWithCredential(
-              GoogleAuthProvider.credential(
-                accessToken: googleAuth.accessToken,
-                idToken: googleAuth.idToken,
-              ),
-            );
-
-            print('User signed in with Google: ${userCredential.user?.email}');
-
-            await saveLoginState(true);
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyApp(),
-              ),
-            );
-          } on FirebaseAuthException catch (error) {
-            print('FirebaseAuthException: ${error.message}');
-          } catch (error) {
-            print('Error: $error');
-          }
-        }
+      final GoogleSignInAccount? guser = await GoogleSignIn().signIn();
+      if (guser == null) {
+        return null;
       }
-    } catch (error) {
-      print('Google Sign-In Error: $error');
+      
+      final GoogleSignInAuthentication gauth = await guser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gauth.accessToken,
+        idToken: gauth.idToken,
+      );
+
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      return userCredential.user;
+    } catch (e) {
+      print("Error signing in with Google: $e");
+      return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -183,15 +170,30 @@ class _loginpageState extends State<loginpage> {
                 ),
               ),
               SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () async {
-                  await googleSignIn();
-                },
-                child: Text(
-                  'Sign in with Google',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+              Builder(
+                builder: (context) {
+                  return ElevatedButton(
+                    onPressed: () async {
+                      User? user = await _signInWithGoogle(context);
+                      if (user != null) {
+                        var pref = await SharedPreferences.getInstance();
+                        await pref.setBool('isLoggedIn', true);
+                      } else {
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Google Sign-In failed. Please try again.')),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Sign in with Google',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }
               ),
+
+              
               SizedBox(height:8),
               Builder(builder: (context) {
                 return ElevatedButton(
