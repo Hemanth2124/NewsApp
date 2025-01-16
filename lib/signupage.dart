@@ -25,24 +25,27 @@ final TextEditingController emailcontroller=TextEditingController();
   final TextEditingController controllername=TextEditingController();
 
 Future<void> registeruser() async {
-    try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailcontroller.text.trim(),
-        password: passwordcontroller.text.trim(),
-      );
-      print('User registered: ${credential.user?.email}');
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      } else {
-        print('Error: ${e.message}');
-      }
-    } catch (e) {
-      print(e);
+  try {
+    final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailcontroller.text.trim(),
+      password: passwordcontroller.text.trim(),
+    );
+    print('User registered: ${credential.user?.email}');
+    await FirebaseAuth.instance.signOut();  // Sign out after registering
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      print('The password provided is too weak.');
+    } else if (e.code == 'email-already-in-use') {
+      print('The account already exists for that email.');
+    } else {
+      print('Error: ${e.message}');
     }
+  } catch (e) {
+    print(e);
   }
+}
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +114,7 @@ Future<void> registeruser() async {
                   'bio': biocontroller.text,
                   }
                 );
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder:(context) => loginpage(),)

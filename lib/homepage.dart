@@ -200,7 +200,7 @@ class _homepageState extends State<homepage> {
                                     width: double.infinity,
                                     errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
           return Image.network(
-        'https://www.counterpunch.org/wp-content/uploads/2024/12/flaglongview-scaled.jpeg', // Path to your default image in assets
+        'https://www.counterpunch.org/wp-content/uploads/2024/12/flaglongview-scaled.jpeg', 
         fit: BoxFit.fill,
         width: double.infinity,
       );
@@ -250,8 +250,7 @@ class _homepageState extends State<homepage> {
                 ),
               );
             },
-            //)
-            //]
+            
           ),
         ),
       ],

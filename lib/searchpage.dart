@@ -14,7 +14,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController controller = TextEditingController();
   String currentCategory = '';
-  List<dynamic> data = []; // Initialize the data list
+  List<dynamic> data = []; 
 
   Future<void> fetchInfo(String endpoint, String category) async {
     final String url =

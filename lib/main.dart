@@ -27,11 +27,11 @@ class RootApp extends StatelessWidget {
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // If the user is logged in, show the home screen
+          
           if (snapshot.hasData) {
-            return MyApp(); // Redirect to main app (logged in)
+            return MyApp(); 
           } else {
-            // Otherwise, show the login page
+            
             return loginpage();
           }
         },

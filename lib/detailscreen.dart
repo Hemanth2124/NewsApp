@@ -14,16 +14,16 @@ class _detailscreenState extends State<detailscreen> {
     try {
       CollectionReference articles = FirebaseFirestore.instance.collection('articles');
       
-      // Use a specific document for saved articles
+      
       DocumentReference savedArticlesDoc = articles.doc('saved articles');
 
-      // Check if the article is already saved
+      
       DocumentSnapshot snapshot = await savedArticlesDoc.get();
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         List<dynamic> savedArticles = data['articles'] ?? [];
 
-        // Check if the article is already present
+        
         bool isArticleSaved = savedArticles.any((article) => article['title'] == widget.article['title']);
         if (isArticleSaved) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -96,7 +96,7 @@ class _detailscreenState extends State<detailscreen> {
                         height: 200,
                         child: Image.network(
                           widget.article[
-                              'urlToImage'], // Use the passed article data
+                              'urlToImage'], 
                           loadingBuilder: (BuildContext context, Widget child,
                               ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
@@ -124,7 +124,7 @@ class _detailscreenState extends State<detailscreen> {
                       left: 10,
                       child: Text(
                         widget.article['source']
-                            ['name'], // Updated data reference
+                            ['name'],
                         style: TextStyle(
                           color: const Color.fromARGB(255, 229, 241, 62),
                         ),
@@ -136,7 +136,7 @@ class _detailscreenState extends State<detailscreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
-                  widget.article['title'], // Updated
+                  widget.article['title'], 
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -156,7 +156,7 @@ class _detailscreenState extends State<detailscreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 8),
                 child: Text(
-                  widget.article['content'], // Updated
+                  widget.article['content'], 
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _detailscreenState extends State<detailscreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 20),
                 child: Text(
-                  widget.article['url'], // Updated
+                  widget.article['url'], 
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
